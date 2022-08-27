@@ -3,12 +3,12 @@ entries:
   eleventy:
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2022-08-27T11:36:50.523578+01:00"
+    created: "2022-08-27T13:49:52.206302+01:00"
     description: A Helm chart for Eleventy
-    digest: 58a8c64b1ba035ac7624c3c1ea8ccea7fbd28583dfae95f1fe20eac988c4b305
+    digest: 2528ec2428d7a21ddc0048fc8a24a5662e2a32725c56702a6a57a8af53ea48ad
     name: eleventy
     type: application
     urls:
     - eleventy-1.0.0.tgz
     version: 1.0.0
-generated: "2022-08-27T11:36:50.518667+01:00"
+generated: "2022-08-27T13:49:52.198767+01:00"
