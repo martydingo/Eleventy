@@ -1,0 +1,36 @@
+{{- $RELEASE_NAME := .Release.Name -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-{{ .Release.Name }}
+  labels:
+    app: nginx-{{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-{{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: nginx-{{ .Release.Name }}
+    spec:
+      containers:
+        - image: {{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}
+          imagePullPolicy: {{ .Values.nginx.image.imagePullPolicy }}
+          name: nginx-{{ .Release.Name }}
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html
+              name: vol-www-{{ .Release.Name }}
+              subPath: {{ .Values.eleventy.project }} 
+          resources:
+            requests:
+              memory: {{ .Values.eleventy.resources.requests.memory }}
+              cpu: {{ .Values.eleventy.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.eleventy.resources.limits.memory }}
+              cpu: {{ .Values.eleventy.resources.limits.cpu }}
+      volumes: {{ range $key, $value := .Values.storage }}
+        - name: vol-{{ $key }}-{{ $RELEASE_NAME }}
+          persistentVolumeClaim:
+            claimName: pvc-{{ $key }}-{{ $RELEASE_NAME }} {{ end }}

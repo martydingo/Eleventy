@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: eleventy-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}{{ if .Values.eleventy.service.annotations }}
+    {{ range $key, $value := .Values.eleventy.service.annotations }}{{ $key }}: {{ $value | quote }}{{ end }}{{ end }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: eleventy
+spec:
+  type: {{ .Values.eleventy.service.type }}
+  ipFamilyPolicy: {{ .Values.eleventy.service.ipFamilyPolicy }}
+  ports:
+    - port: {{ .Values.eleventy.service.port }}
+      targetPort: 8080
+      protocol: TCP
+      name: http-alt
+  selector:
+    app: eleventy-{{ .Release.Name }}

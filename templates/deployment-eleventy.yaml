@@ -1,0 +1,49 @@
+{{- $RELEASE_NAME := .Release.Name -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eleventy-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: eleventy-{{ .Release.Name }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: eleventy-{{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: eleventy-{{ .Release.Name }}
+        app.kubernetes.io/name: eleventy
+    spec:
+      containers:
+        - image: {{ .Values.eleventy.image.repository }}:{{ .Values.eleventy.image.tag }}
+          command: ['bash', '-c', 'chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh']
+          imagePullPolicy: {{ .Values.eleventy.image.imagePullPolicy }}
+          name: {{ .Release.Name }}
+          env:
+            - name: "PROJECT" 
+              value: {{ .Values.eleventy.project }}{{ if .Values.eleventy.securityContext }}
+          securityContext: {{ range $key, $value := .Values.eleventy.securityContext }}
+            {{ $key }}: {{ $value }}{{ end }}{{ end }}
+          ports:
+            - containerPort: 8080
+              name: http-alt
+          volumeMounts:
+            - mountPath: /projects
+              name: vol-projects-{{ .Release.Name }}
+            - mountPath: /www
+              name: vol-www-{{ .Release.Name }}
+          resources:
+            requests:
+              memory: {{ .Values.eleventy.resources.requests.memory }}
+              cpu: {{ .Values.eleventy.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.eleventy.resources.limits.memory }}
+              cpu: {{ .Values.eleventy.resources.limits.cpu }}
+      volumes: {{ range $key, $value := .Values.storage }}
+        - name: vol-{{ $key }}-{{ $RELEASE_NAME }}
+          persistentVolumeClaim:
+            claimName: pvc-{{ $key }}-{{ $RELEASE_NAME }} {{ end }}

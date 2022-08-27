@@ -1,0 +1,19 @@
+{{- $RELEASE_NAME := .Release.Name -}}
+{{- $RELEASE_NAMESPACE := .Release.Namespace -}}
+{{- $NGINX_SERVICE_PORT := .Values.nginx.service.port -}}
+{{ range $key, $value := .Values.storage }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-{{ $key }}-{{ $RELEASE_NAME }}
+  namespace: {{ $RELEASE_NAMESPACE }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: {{ .persistentVolumeName }}
+  resources:
+    requests:
+      storage: {{ .requests.storage }}
+---
+{{ end }}
