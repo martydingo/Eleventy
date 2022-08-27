@@ -24,7 +24,7 @@ eleventy:
   # within <storage.projects.persistentVolumeClaimName>
   project: chart-example.local
   image:
-    repository: martydingo/helm-eleventy
+    repository: martydingo/eleventy
     imagePullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
