@@ -23,6 +23,8 @@ spec:
           command: ['bash', '-c', 'chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh']
           imagePullPolicy: {{ .Values.eleventy.image.imagePullPolicy }}
           name: {{ .Release.Name }}
+          stdin: true 
+          tty: true 
           env:
             - name: "PROJECT" 
               value: {{ .Values.eleventy.project }}{{ if .Values.eleventy.securityContext }}
